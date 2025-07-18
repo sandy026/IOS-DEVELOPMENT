@@ -1,0 +1,23 @@
+workflows:
+  ios-simulator-build:
+    name: iOS Simulator Build
+    instance_type: mac_mini_m2
+    environment:
+      xcode: latest
+      vars:
+        XCODE_PROJECT: "MyApp.xcodeproj"
+        XCODE_SCHEME: "MyApp"
+    scripts:
+      - name: Install pods
+        script: |
+          cd ios && pod install
+      - name: Build for simulator
+        script: |
+          xcodebuild build \
+            -project "$XCODE_PROJECT" \
+            -scheme "$XCODE_SCHEME" \
+            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,name=iPhone 15,OS=18.0' \
+            CODE_SIGNING_REQUIRED=NO
+    artifacts:
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
